@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audit Logs | NemoClaw</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        * { font-family: 'Inter', sans-serif; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        body {
+            background: #0a0a0f;
+            background-image: radial-gradient(at 40% 20%, rgba(224, 122, 58, 0.15) 0px, transparent 50%);
+            min-height: 100vh;
+        }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .gradient-card { background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%); border: 1px solid rgba(255, 255, 255, 0.08); }
+    </style>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { brand: { orange: '#E07A3A', blue: '#6b8aff', dark: '#0a0a0f', cream: '#f5f0eb', gold: '#c78c2e', green: '#22c55e' } } } } }
+    </script>
+</head>
+<body class="text-brand-cream">
+    
+    <!-- Top Nav -->
+    <nav class="border-b border-white/10 glass sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-orange to-brand-gold flex items-center justify-center shadow-lg shadow-orange-500/30">
+                        <i class="fas fa-shield-halved text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold bg-gradient-to-r from-brand-orange to-brand-gold bg-clip-text text-transparent">NemoClaw</h1>
+                        <p class="text-xs text-gray-400">Enterprise AI Security</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-6">
+                    <a href="/" class="text-gray-400 hover:text-brand-cream transition">Dashboard</a>
+                    <a href="/audit" class="text-brand-orange font-medium">Audit Logs</a>
+                    <a href="/policies" class="text-gray-400 hover:text-brand-cream transition">Policies</a>
+                    <a href="/team" class="text-gray-400 hover:text-brand-cream transition">Team</a>
+                    <button class="bg-gradient-to-r from-brand-orange to-brand-gold hover:from-orange-600 hover:to-orange-500 text-white px-5 py-2 rounded-lg font-medium transition shadow-lg shadow-orange-500/30">
+                        <i class="fas fa-crown mr-2"></i>Upgrade Pro
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Audit Logs -->
+    <main class="max-w-7xl mx-auto px-6 py-8" x-data="audit()">
+        
+        <div class="mb-8">
+            <h2 class="text-3xl font-bold mb-2">Audit Logs</h2>
+            <p class="text-gray-400">Complete security event history with advanced filtering and export</p>
+        </div>
+
+        <!-- Filters -->
+        <div class="gradient-card rounded-2xl p-6 mb-6">
+            <div class="flex flex-wrap gap-4 items-end">
+                <div class="flex-1 min-w-64">
+                    <label class="block text-sm text-gray-400 mb-2 font-medium">Search</label>
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" x-model="search" placeholder="Search commands, sandboxes..." class="w-full glass border border-white/10 rounded-xl pl-10 pr-4 py-3 text-brand-cream focus:outline-none focus:border-brand-orange transition">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2 font-medium">Status</label>
+                    <select x-model="statusFilter" class="glass border border-white/10 rounded-xl px-4 py-3 text-brand-cream focus:outline-none focus:border-brand-orange transition">
+                        <option value="all">All</option>
+                        <option value="BLOCKED">Blocked</option>
+                        <option value="ALLOWED">Allowed</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2 font-medium">Type</label>
+                    <select x-model="typeFilter" class="glass border border-white/10 rounded-xl px-4 py-3 text-brand-cream focus:outline-none focus:border-brand-orange transition">
+                        <option value="all">All</option>
+                        <option value="filesystem">Filesystem</option>
+                        <option value="network">Network</option>
+                        <option value="privilege">Privilege</option>
+                        <option value="binary">Binary</option>
+                        <option value="resource">Resource</option>
+                        <option value="logs">Logs</option>
+                    </select>
+                </div>
+                <div class="flex gap-2">
+                    <button @click="exportCSV()" class="bg-gradient-to-r from-brand-blue to-purple-600 hover:from-blue-600 hover:to-purple-500 text-white px-5 py-3 rounded-xl font-medium transition shadow-lg shadow-blue-500/30">
+                        <i class="fas fa-download mr-2"></i>Export CSV
+                    </button>
+                    <button @click="loadLogs()" class="glass hover:bg-white/10 text-brand-cream px-5 py-3 rounded-xl font-medium transition">
+                        <i class="fas fa-refresh mr-2"></i>Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logs Table -->
+        <div class="gradient-card rounded-2xl overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full mono text-sm">
+                    <thead class="bg-white/5 border-b border-white/10">
+                        <tr>
+                            <th class="text-left px-6 py-4 text-gray-400 font-medium">Timestamp</th>
+                            <th class="text-left px-6 py-4 text-gray-400 font-medium">Sandbox</th>
+                            <th class="text-left px-6 py-4 text-gray-400 font-medium">Type</th>
+                            <th class="text-left px-6 py-4 text-gray-400 font-medium">Command</th>
+                            <th class="text-left px-6 py-4 text-gray-400 font-medium">Status</th>
+                            <th class="text-left px-6 py-4 text-gray-400 font-medium">Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template x-for="log in filteredLogs" :key="log.timestamp">
+                            <tr class="border-b border-white/5 hover:bg-white/5 transition">
+                                <td class="px-6 py-4 text-gray-400" x-text="new Date(log.timestamp).toLocaleString()">--</td>
+                                <td class="px-6 py-4 text-brand-cream font-medium" x-text="log.sandbox">--</td>
+                                <td class="px-6 py-4">
+                                    <span class="px-3 py-1 rounded-lg text-xs font-medium" 
+                                          :class="{
+                                              'filesystem': 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
+                                              'network': 'bg-red-500/20 text-red-400 border border-red-500/30',
+                                              'privilege': 'bg-brand-blue/20 text-brand-blue border border-brand-blue/30',
+                                              'binary': 'bg-brand-orange/20 text-brand-orange border border-brand-orange/30',
+                                              'resource': 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30',
+                                              'logs': 'bg-pink-500/20 text-pink-400 border border-pink-500/30'
+                                          }[log.type] || 'bg-gray-700'" 
+                                          x-text="log.type">--</span>
+                                </td>
+                                <td class="px-6 py-4 text-brand-cream" x-text="log.command">--</td>
+                                <td class="px-6 py-4">
+                                    <span class="px-3 py-1 rounded-lg text-xs font-bold" 
+                                          :class="log.status === 'BLOCKED' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-brand-green/20 text-brand-green border border-brand-green/30'" 
+                                          x-text="log.status">--</span>
+                                </td>
+                                <td class="px-6 py-4 text-gray-400" x-text="log.reason">--</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function audit() {
+            return {
+                logs: [],
+                search: '',
+                statusFilter: 'all',
+                typeFilter: 'all',
+                async loadLogs() {
+                    const res = await fetch('/api/audit?limit=100');
+                    this.logs = await res.json();
+                },
+                get filteredLogs() {
+                    return this.logs.filter(log => {
+                        const matchesSearch = !this.search || log.command.toLowerCase().includes(this.search.toLowerCase()) || log.sandbox.toLowerCase().includes(this.search.toLowerCase());
+                        const matchesStatus = this.statusFilter === 'all' || log.status === this.statusFilter;
+                        const matchesType = this.typeFilter === 'all' || log.type === this.typeFilter;
+                        return matchesSearch && matchesStatus && matchesType;
+                    });
+                },
+                exportCSV() {
+                    const headers = ['Timestamp', 'Sandbox', 'Type', 'Command', 'Status', 'Reason'];
+                    const rows = this.filteredLogs.map(log => [log.timestamp, log.sandbox, log.type, log.command, log.status, log.reason]);
+                    const csv = [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+                    const blob = new Blob([csv], { type: 'text/csv' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `nemoclaw-audit-${new Date().toISOString().slice(0,10)}.csv`;
+                    a.click();
+                },
+                init() { this.loadLogs(); }
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Policies | NemoClaw</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        * { font-family: 'Inter', sans-serif; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        body {
+            background: #0a0a0f;
+            background-image: radial-gradient(at 80% 0%, rgba(107, 138, 255, 0.1) 0px, transparent 50%);
+            min-height: 100vh;
+        }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .gradient-card { background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .toggle-checkbox:checked { right: 0; border-color: #22c55e; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #22c55e; }
+    </style>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { brand: { orange: '#E07A3A', blue: '#6b8aff', dark: '#0a0a0f', cream: '#f5f0eb', gold: '#c78c2e', green: '#22c55e' } } } } }
+    </script>
+</head>
+<body class="text-brand-cream">
+    
+    <!-- Top Nav -->
+    <nav class="border-b border-white/10 glass sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-orange to-brand-gold flex items-center justify-center shadow-lg shadow-orange-500/30">
+                        <i class="fas fa-shield-halved text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold bg-gradient-to-r from-brand-orange to-brand-gold bg-clip-text text-transparent">NemoClaw</h1>
+                        <p class="text-xs text-gray-400">Enterprise AI Security</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-6">
+                    <a href="/" class="text-gray-400 hover:text-brand-cream transition">Dashboard</a>
+                    <a href="/audit" class="text-gray-400 hover:text-brand-cream transition">Audit Logs</a>
+                    <a href="/policies" class="text-brand-orange font-medium">Policies</a>
+                    <a href="/team" class="text-gray-400 hover:text-brand-cream transition">Team</a>
+                    <button class="bg-gradient-to-r from-brand-orange to-brand-gold hover:from-orange-600 hover:to-orange-500 text-white px-5 py-2 rounded-lg font-medium transition shadow-lg shadow-orange-500/30">
+                        <i class="fas fa-crown mr-2"></i>Upgrade Pro
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Policies -->
+    <main class="max-w-7xl mx-auto px-6 py-8" x-data="policies()">
+        
+        <div class="mb-8">
+            <h2 class="text-3xl font-bold mb-2">Security Policies</h2>
+            <p class="text-gray-400">Configure enforcement rules for AI agent sandboxes</p>
+        </div>
+
+        <!-- Policy Cards -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <template x-for="(policy, key) in policiesObj" :key="key">
+                <div class="gradient-card rounded-2xl p-6 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-brand-blue/10 rounded-full blur-2xl"></div>
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-xl bg-brand-blue/20 flex items-center justify-center border border-brand-blue/30">
+                                <i class="fas" :class="{
+                                    'fa-hard-drive': key === 'filesystem',
+                                    'fa-globe': key === 'network',
+                                    'fa-user-shield': key === 'privilege',
+                                    'fa-file-code': key === 'binary',
+                                    'fa-gauge': key === 'resource',
+                                    'fa-file-shield': key === 'logs'
+                                }[key] || 'fa-shield-halved'"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold capitalize" x-text="key">--</h3>
+                                <p class="text-sm text-gray-400 mt-1" x-text="policy.description">--</p>
+                            </div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" x-model="policy.enabled" class="sr-only peer">
+                            <div class="w-14 h-7 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-brand-green"></div>
+                        </label>
+                    </div>
+                    <div class="flex items-center justify-between mt-4 pt-4 border-t border-white/10">
+                        <div class="text-sm">
+                            <span class="text-gray-400">Total blocks: </span>
+                            <span class="text-brand-cream font-bold" x-text="policy.blocks">--</span>
+                        </div>
+                        <button class="text-brand-orange text-sm font-medium hover:underline">
+                            Configure <i class="fas fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </template>
+        </div>
+
+        <!-- Custom Rules -->
+        <div class="gradient-card rounded-2xl p-6 mb-8">
+            <h3 class="text-xl font-bold mb-6">Custom Rules</h3>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm text-gray-400 mb-3 font-medium">
+                        <i class="fas fa-ban mr-2 text-red-400"></i>Blocked Domains
+                    </label>
+                    <div class="flex gap-2">
+                        <input type="text" placeholder="Add domain (e.g., malware.site)" class="flex-1 glass border border-white/10 rounded-xl px-4 py-3 text-brand-cream focus:outline-none focus:border-brand-orange transition">
+                        <button class="bg-brand-orange hover:bg-orange-600 text-white px-4 py-3 rounded-xl font-medium transition">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        <span class="px-3 py-1.5 bg-red-500/20 text-red-400 rounded-lg text-sm border border-red-500/30 flex items-center gap-2">
+                            <i class="fas fa-globe"></i> google.com
+                            <button class="hover:text-white"><i class="fas fa-times"></i></button>
+                        </span>
+                        <span class="px-3 py-1.5 bg-red-500/20 text-red-400 rounded-lg text-sm border border-red-500/30 flex items-center gap-2">
+                            <i class="fas fa-globe"></i> facebook.com
+                            <button class="hover:text-white"><i class="fas fa-times"></i></button>
+                        </span>
+                        <span class="px-3 py-1.5 bg-red-500/20 text-red-400 rounded-lg text-sm border border-red-500/30 flex items-center gap-2">
+                            <i class="fas fa-globe"></i> malware.site
+                            <button class="hover:text-white"><i class="fas fa-times"></i></button>
+                        </span>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-400 mb-3 font-medium">
+                        <i class="fas fa-check mr-2 text-brand-green"></i>Allowed Paths
+                    </label>
+                    <div class="flex gap-2">
+                        <input type="text" placeholder="Add path (e.g., /workspace)" class="flex-1 glass border border-white/10 rounded-xl px-4 py-3 text-brand-cream focus:outline-none focus:border-brand-orange transition">
+                        <button class="bg-brand-orange hover:bg-orange-600 text-white px-4 py-3 rounded-xl font-medium transition">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        <span class="px-3 py-1.5 bg-brand-green/20 text-brand-green rounded-lg text-sm border border-brand-green/30 flex items-center gap-2">
+                            <i class="fas fa-folder"></i> /tmp
+                            <button class="hover:text-white"><i class="fas fa-times"></i></button>
+                        </span>
+                        <span class="px-3 py-1.5 bg-brand-green/20 text-brand-green rounded-lg text-sm border border-brand-green/30 flex items-center gap-2">
+                            <i class="fas fa-folder"></i> /workspace
+                            <button class="hover:text-white"><i class="fas fa-times"></i></button>
+                        </span>
+                        <span class="px-3 py-1.5 bg-brand-green/20 text-brand-green rounded-lg text-sm border border-brand-green/30 flex items-center gap-2">
+                            <i class="fas fa-folder"></i> /home/sandbox
+                            <button class="hover:text-white"><i class="fas fa-times"></i></button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Policy Templates -->
+        <div class="gradient-card rounded-2xl p-6">
+            <h3 class="text-xl font-bold mb-6">Policy Templates</h3>
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="glass rounded-xl p-5 border border-brand-orange/30 hover:border-brand-orange/50 transition">
+                    <div class="flex items-center gap-3 mb-3">
+                        <i class="fas fa-lock text-brand-orange text-2xl"></i>
+                        <h4 class="font-bold">Strict (Default)</h4>
+                    </div>
+                    <p class="text-sm text-gray-400 mb-4">Maximum security - all policies enabled, recommended for production</p>
+                    <button class="text-brand-orange text-sm font-medium hover:underline">
+                        Apply Template <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+                <div class="glass rounded-xl p-5 hover:border-white/20 transition">
+                    <div class="flex items-center gap-3 mb-3">
+                        <i class="fas fa-balance-scale text-brand-blue text-2xl"></i>
+                        <h4 class="font-bold">Balanced</h4>
+                    </div>
+                    <p class="text-sm text-gray-400 mb-4">Network + filesystem only, good for general development</p>
+                    <button class="text-brand-orange text-sm font-medium hover:underline">
+                        Apply Template <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+                <div class="glass rounded-xl p-5 hover:border-white/20 transition">
+                    <div class="flex items-center gap-3 mb-3">
+                        <i class="fas fa-flask text-brand-gold text-2xl"></i>
+                        <h4 class="font-bold">Development</h4>
+                    </div>
+                    <p class="text-sm text-gray-400 mb-4">Minimal restrictions for testing and experimentation</p>
+                    <button class="text-brand-orange text-sm font-medium hover:underline">
+                        Apply Template <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function policies() {
+            return {
+                policiesObj: {},
+                async loadPolicies() {
+                    const res = await fetch('/api/policies');
+                    this.policiesObj = await res.json();
+                },
+                init() { this.loadPolicies(); }
+            }
+        }
+    </script>
+</body>
+</html>
