@@ -8,6 +8,10 @@
 
 NemoClaw is a container security enforcement layer that protects your infrastructure from AI coding agent exploits. It sandboxes AI agents (Cursor, Claude Code, Aider, etc.) and enforces strict policies on filesystem access, network egress, privilege escalation, binary execution, and resource usage.
 
+**HIPAA-Ready Architecture** - Building toward HIPAA compliance (v2) and SOC 2 (v3).
+
+---
+
 ## 🔒 What It Protects Against
 
 | Attack Type | Example | Block Reason |
@@ -19,11 +23,13 @@ NemoClaw is a container security enforcement layer that protects your infrastruc
 | **Resource** | Fork bomb `:(){ :|:& };:` | CPU/memory limits |
 | **Logs** | `rm /var/log/audit.log` | Audit log protection |
 
+---
+
 ## 🚀 Quick Start
 
 ```bash
 # Clone the repo
-git clone https://github.com/cortanasolutions/nemoclaw.git
+git clone https://github.com/TrustlessMike/nemoclaw.git
 cd nemoclaw
 
 # Install dependencies
@@ -36,6 +42,8 @@ python src/dashboard/app.py
 open http://localhost:8086
 ```
 
+---
+
 ## 📊 Features
 
 - **Real-time Dashboard** - Live sandbox status, block activity charts, security feed
@@ -43,6 +51,8 @@ open http://localhost:8086
 - **Policy Engine** - Toggle enforcement rules, custom domain blocklists
 - **Team Management** - User roles, API keys, access control
 - **OpenShell Integration** - Production-ready sandbox enforcement
+
+---
 
 ## 🏗️ Architecture
 
@@ -75,6 +85,8 @@ open http://localhost:8086
 └─────────────────────────────────────────────────┘
 ```
 
+---
+
 ## 🎯 Use Cases
 
 ### For AI Dev Shops
@@ -82,9 +94,14 @@ open http://localhost:8086
 - Audit compliance for enterprise clients
 - Reduce liability from AI-generated code
 
+### For Healthcare/HealthTech
+- **HIPAA-eligible architecture** (v2 roadmap)
+- Prevent AI agents from accessing PHI without authorization
+- Audit trails for compliance reporting
+
 ### For Enterprises
 - Secure internal coding agent deployments
-- Meet SOC2/HIPAA compliance requirements
+- Meet SOC2/HIPAA compliance requirements (v2-v3 roadmap)
 - Protect secrets and sensitive data
 
 ### For Solo Developers
@@ -92,12 +109,16 @@ open http://localhost:8086
 - Prevent accidental `rm -rf` disasters
 - API key protection
 
+---
+
 ## 🛠️ Tech Stack
 
 - **Backend:** Python/Flask
 - **Frontend:** Tailwind CSS + Alpine.js + Chart.js
 - **Sandbox:** OpenShell (container security)
 - **Database:** SQLite (audit logs) → PostgreSQL (team features)
+
+---
 
 ## 📱 Dashboard Screenshots
 
@@ -109,6 +130,8 @@ open http://localhost:8086
 
 ### Policy Editor
 ![Policies](images/policies.png)
+
+---
 
 ## 🔧 Configuration
 
@@ -149,6 +172,8 @@ resource: disabled
 logs: disabled
 ```
 
+---
+
 ## 🚢 Deployment
 
 ### Local Development
@@ -183,6 +208,8 @@ spec:
         - containerPort: 8086
 ```
 
+---
+
 ## 📈 Roadmap
 
 ### v0 (Complete ✅)
@@ -190,24 +217,58 @@ spec:
 - Dashboard UI
 - Audit logs
 - Policy editor
+- **Status:** Demo-ready, SMB sales
 
 ### v1 (4-6 weeks)
-- Production-ready policy engine
-- Team management
-- Stripe billing
-- VS Code extension
+- Encrypted audit log storage (AES-256)
+- Authentication (Auth0/Okta)
+- Role-based access control (RBAC)
+- HTTPS/TLS
+- **Status:** Security-hardened, early enterprise
 
-### v2 (8-10 weeks)
-- SSO (Auth0, Okta)
-- SOC2 reports
-- Slack alerts
-- Usage metering
-
-### v3 (12-16 weeks)
-- Kubernetes admission controller
+### v2 (8-10 weeks) - HIPAA Ready
+- 6-year log retention
 - SIEM integration (Splunk, Datadog)
-- Enterprise SSO
-- Custom policy builder
+- Access logging + MFA
+- Business Associate Agreement (BAA) capability
+- **Status:** HIPAA technical safeguards complete
+
+### v3 (12-16 weeks) - SOC 2 Ready
+- SOC 2 Type 2 audit
+- Formal security policies
+- Penetration testing
+- Incident response workflows
+- **Status:** Enterprise compliance complete
+
+---
+
+## 🔐 Compliance Roadmap
+
+### HIPAA Technical Safeguards
+
+| Requirement | v0 | v1 | v2 | v3 |
+|-------------|----|----|----|----|
+| Access Control | ❌ | ✅ | ✅ | ✅ |
+| Audit Controls | ✅ | ✅ | ✅ | ✅ |
+| Integrity Controls | ✅ | ✅ | ✅ | ✅ |
+| Transmission Security | ❌ | ✅ | ✅ | ✅ |
+| Encryption at Rest | ❌ | ✅ | ✅ | ✅ |
+| Log Retention (6 years) | ❌ | ❌ | ✅ | ✅ |
+| BAA Capability | ❌ | ❌ | ✅ | ✅ |
+
+### SOC 2 Trust Criteria
+
+| Criteria | v0 | v1 | v2 | v3 |
+|----------|----|----|----|----|
+| Security | ✅ | ✅ | ✅ | ✅ |
+| Availability | ❌ | ⚠️ | ✅ | ✅ |
+| Processing Integrity | ✅ | ✅ | ✅ | ✅ |
+| Confidentiality | ❌ | ✅ | ✅ | ✅ |
+| Privacy | ❌ | ❌ | ✅ | ✅ |
+
+**Legend:** ✅ Complete | ⚠️ Partial | ❌ Not implemented
+
+---
 
 ## 🤝 Contributing
 
@@ -217,15 +278,21 @@ spec:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
+---
+
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
 
 ## 🙏 Acknowledgments
 
 - Built on top of [OpenShell](https://openshell.io) container security
 - Inspired by the need for safe AI coding agent deployments
 - Community feedback from AI dev shops and enterprises
+
+---
 
 ## 📞 Contact
 
@@ -234,7 +301,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Website: https://cortanasolutions.com
 - Demo: http://77.42.71.243:8086
 - Email: mike@cortanasolutions.com
+- GitHub: https://github.com/TrustlessMike/nemoclaw
 
 ---
 
 **Built with ❤️ by Cortana Solutions**
+
+*HIPAA compliance roadmap: v2 (8-10 weeks). SOC 2 roadmap: v3 (12-16 weeks).*
